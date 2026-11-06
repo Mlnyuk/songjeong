@@ -10,7 +10,7 @@ cleanup() {
   rm -f "$response_file"
 }
 trap cleanup EXIT
-docker build -t "$test_image" "$project_dir"
+docker build --pull -t "$test_image" "$project_dir"
 container_id=$(docker run -d --read-only --tmpfs /tmp:rw,noexec,nosuid,size=64m,mode=1777 \
   --cap-drop ALL --security-opt no-new-privileges:true -p 127.0.0.1::8080 "$test_image")
 test_port=$(docker port "$container_id" 8080/tcp | sed -n 's/^127\.0\.0\.1://p')
