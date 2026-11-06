@@ -1,0 +1,26 @@
+name: Validate deployment
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Build and smoke test
+        run: bash scripts/smoke-test.sh
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+      - name: Render Kubernetes manifest
+        run: |
+          mkdir -p dist
+          kubectl kustomize . > dist/songjeong.yaml
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: songjeong-kubernetes
+          path: dist/songjeong.yaml
+          if-no-files-found: error

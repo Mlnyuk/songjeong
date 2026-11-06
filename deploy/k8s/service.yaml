@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: songjeong-web
+spec:
+  type: NodePort
+  selector:
+    app: songjeong-web
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      # Let the destination cluster allocate an available NodePort.
